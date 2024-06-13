@@ -44,9 +44,9 @@ function displayTrack(index) {
     trackDetailsDiv.innerHTML = `
       ${item.track.preview_url ? `<audio controls src="${item.track.preview_url}"></audio>` : "<p>No preview available</p>"}
       <div class="navigation-buttons">
-        <button id="prev-btn">Previous</button>
-        <button id="next-btn">Next</button>
-      </div>
+      <button id="prev-btn"><i class="fas fa-chevron-left"></i></button>
+      <button id="next-btn"><i class="fas fa-chevron-right"></i></button>
+    </div>    
       <p>${item.track.name} by ${item.track.artists.map(artist => artist.name).join(", ")}</p>
     `;
 

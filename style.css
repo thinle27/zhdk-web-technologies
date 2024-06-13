@@ -64,3 +64,11 @@ main {
 li {
     list-style-type: none;
 }
+
+#prev-btn {
+    rotate: 90deg;
+}
+
+#next-btn {
+    rotate: 90deg;
+}
