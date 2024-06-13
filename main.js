@@ -3,14 +3,17 @@ const SPOTIFY_CLIENT_SECRET = "161fc5e3df004b95af3ba8c62f3eaf54";
 const PLAYLIST_ID = "4T8frEWNxfFW6X1Il3EJJ9?si=e93bb18f94d84a34";
 const container = document.querySelector('div[data-js="tracks"]');
 
-const GENIUS_API_TOKEN = 'tA_GEr3psVjp8HxJ0Q6UQ7kzLFHQbZ_wgrMIGYhfPcGB94VBTCBlsOkrE8XXn5jW';
-
 let currentTrackIndex = 0;
 let tracks = [];
+let lyricsData = [];
 
-async function fetchLyrics(songTitle, artistName) {
-  // Fetch lyrics implementation
-}
+fetch('genius.json')
+  .then(response => response.json())
+  .then(data => {
+    lyricsData = data.lyrics;
+    fetchAccessToken();
+  })
+  .catch(error => console.error('Error fetching lyrics:', error));
 
 function fetchPlaylist(token, playlistId) {
   fetch(`https://api.spotify.com/v1/playlists/${PLAYLIST_ID}`, {
@@ -37,24 +40,22 @@ function displayTrack(index) {
   if (index >= 0 && index < tracks.length) {
     const item = tracks[index];
     const trackDiv = document.createElement('div');
-    trackDiv.classList.add('track-container'); // Updated to track-container
+    trackDiv.classList.add('track-container');
 
     const trackDetailsDiv = document.createElement('div');
     trackDetailsDiv.classList.add('track-details');
     trackDetailsDiv.innerHTML = `
-    <div class="containerLeft">
-
-    
-    <div class="track-details">
-      <h1>${item.track.name}</h1>
-      <p>by ${item.track.artists.map(artist => artist.name).join(", ")}</p>
-    </div>
-    <div class="navigation-buttons">
-    <button id="prev-btn"><i class="fas fa-chevron-left"></i></button>
-    ${item.track.preview_url ? `<audio controls src="${item.track.preview_url}"></audio>` : "<p>No preview available</p>"}
-    <button id="next-btn"><i class="fas fa-chevron-right"></i></button>
-    </div>
-    </div>
+      <div class="containerLeft">
+        <div class="track-details">
+          <h1>${item.track.name}</h1>
+          <p>by ${item.track.artists.map(artist => artist.name).join(", ")}</p>
+        </div>
+        <div class="navigation-buttons">
+          <button id="prev-btn"><i class="fas fa-chevron-left"></i></button>
+          ${item.track.preview_url ? `<audio controls src="${item.track.preview_url}"></audio>` : "<p>No preview available</p>"}
+          <button id="next-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
     `;
 
     trackDiv.appendChild(trackDetailsDiv);
@@ -69,6 +70,20 @@ function displayTrack(index) {
     }
 
     container.appendChild(trackDiv);
+
+    const containerLeft = document.querySelector('.containerLeft');
+    if (containerLeft) {
+      // Display lyrics for the current track in the background of containerLeft
+      const lyricsIndex = index;
+      if (lyricsData[lyricsIndex]) {
+        containerLeft.style.backgroundImage = `url(data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:40px;color:gray;">${lyricsData[lyricsIndex]}</div></foreignObject></svg>`)})`;
+        containerLeft.style.backgroundSize = "cover";
+      } else {
+        containerLeft.style.backgroundImage = '';
+      }
+    } else {
+      console.error('Error: .containerLeft element not found.');
+    }
 
     document.getElementById('prev-btn').addEventListener('click', () => {
       if (currentTrackIndex > 0) {
@@ -105,4 +120,5 @@ function fetchAccessToken() {
     });
 }
 
+// Start the process by fetching the access token
 fetchAccessToken();
