@@ -42,12 +42,12 @@ function displayTrack(index) {
     const trackDetailsDiv = document.createElement('div');
     trackDetailsDiv.classList.add('track-details');
     trackDetailsDiv.innerHTML = `
-      <p>${item.track.name} by ${item.track.artists.map(artist => artist.name).join(", ")}</p>
       ${item.track.preview_url ? `<audio controls src="${item.track.preview_url}"></audio>` : "<p>No preview available</p>"}
       <div class="navigation-buttons">
         <button id="prev-btn">Previous</button>
         <button id="next-btn">Next</button>
       </div>
+      <p>${item.track.name} by ${item.track.artists.map(artist => artist.name).join(", ")}</p>
     `;
 
     trackDiv.appendChild(trackDetailsDiv);

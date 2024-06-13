@@ -14,7 +14,7 @@ body {
 main {
     display: flex;
     flex-direction: column;
-    padding: 0 5rem;
+    padding: 0 0 0 5rem;
     height: 100vh; /* Ensure the main section takes the full viewport height */
 }
 
@@ -28,7 +28,6 @@ main {
     align-items: center; /* Center elements vertically */
     height: 100vh; /* Full viewport height */
     position: relative;
-    padding: 1rem;
     background: rgba(255, 255, 255, 0.8); /* Semi-transparent background for readability */
 }
 
