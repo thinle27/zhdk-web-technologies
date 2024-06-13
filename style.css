@@ -1,15 +1,67 @@
+@font-face {
+    font-family: myFirstFont;
+    src: url(fonts/GeneralSans-Semibold.woff);
+}
 
-/* 
-.card-container {
+body {
+    margin: 0;
+    padding: 0;
+    font-family: myFirstFont;
+    overflow-x: hidden;
+    height: 100vh; /* Ensure the body takes the full viewport height */
+}
+
+main {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    padding: 0 5rem;
+    height: 100vh; /* Ensure the main section takes the full viewport height */
 }
 
-
-.card {
-    border-style: solid;
-    margin: 100px 20px;
-    border-radius: 20px;
-    border-image: "https://images.unsplash.com/photo-1656618020911-1c7a937175fd?crop=entropy&cs=tinysrgb&fm=jpg&ixid=MnwzMjM4NDZ8MHwxfHJhbmRvbXx8fHx8fHx8fDE2NTc1MzQyNTE&ixlib=rb-1.2.1&q=80";
+.container {
+    margin-bottom: 2rem;
 }
- */
+
+.track-container {
+    display: flex;
+    justify-content: space-between; /* Ensure elements are spaced apart */
+    align-items: center; /* Center elements vertically */
+    height: 100vh; /* Full viewport height */
+    position: relative;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8); /* Semi-transparent background for readability */
+}
+
+.track-details {
+    width: 50%;
+    z-index: 1; /* Ensure track details are above the album image */
+}
+
+.track-container img.albumImage {
+    height: 100%;
+    width: auto;
+    object-fit: cover; /* Ensure the image covers the entire area */
+    z-index: 0; /* Ensure the image is behind the track details */
+    margin-left: auto; /* Push the image to the right */
+}
+
+.navigation-buttons {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: flex-start; /* Align buttons to the left */
+    gap: 1rem;
+    z-index: 1; /* Ensure buttons appear above the image */
+    position: absolute;
+    bottom: 1rem; /* Adjust vertical positioning */
+    left: 1rem; /* Adjust horizontal positioning */
+}
+
+.navigation-buttons button {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+li {
+    list-style-type: none;
+}
