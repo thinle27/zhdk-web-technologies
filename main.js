@@ -2,6 +2,7 @@ const SPOTIFY_CLIENT_ID = "67b411e20d594f30bf7a8d3bbde54285";
 const SPOTIFY_CLIENT_SECRET = "161fc5e3df004b95af3ba8c62f3eaf54";
 const PLAYLIST_ID = "4T8frEWNxfFW6X1Il3EJJ9?si=e93bb18f94d84a34";
 const container = document.querySelector('div[data-js="tracks"]');
+const lyricsContainer = document.getElementById('lyrics-container');
 
 let currentTrackIndex = 0;
 let tracks = [];
@@ -11,11 +12,10 @@ let audio = new Audio();
 fetch('genius.json')
   .then(response => response.json())
   .then(data => {
-    const container = document.getElementById('json-container');
-    container.textContent = JSON.stringify(data, null, 2); // Format with 2 spaces
+    lyricsData = data.lyrics;
+    fetchAccessToken();
   })
-  .catch(error => console.error('Error fetching JSON:', error));
-
+  .catch(error => console.error('Error fetching lyrics:', error));
 
 function fetchPlaylist(token, playlistId) {
   fetch(`https://api.spotify.com/v1/playlists/${PLAYLIST_ID}`, {
@@ -38,6 +38,8 @@ function fetchPlaylist(token, playlistId) {
 
 function displayTrack(index) {
   container.innerHTML = '';
+  lyricsContainer.innerHTML = '';
+  lyricsContainer.classList.remove('active');
 
   if (index >= 0 && index < tracks.length) {
     const item = tracks[index];
@@ -81,6 +83,7 @@ function displayTrack(index) {
       if (currentTrackIndex > 0) {
         currentTrackIndex--;
         displayTrack(currentTrackIndex);
+        displayLyrics(currentTrackIndex); // Display lyrics for the new track
       }
     });
 
@@ -89,8 +92,11 @@ function displayTrack(index) {
       if (currentTrackIndex < tracks.length - 1) {
         currentTrackIndex++;
         displayTrack(currentTrackIndex);
+        displayLyrics(currentTrackIndex); // Display lyrics for the new track
       }
     });
+
+    displayLyrics(index); // Display lyrics for the current track
   }
 }
 
@@ -130,6 +136,13 @@ function stopPlayback() {
   audio.pause();
   audio.currentTime = 0;
   document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i>';
+}
+
+function displayLyrics(index) {
+  if (index >= 0 && index < lyricsData.length) {
+    lyricsContainer.classList.add('active');
+    lyricsContainer.innerHTML = `<p>${lyricsData[index]}</p>`;
+  }
 }
 
 // Start the process by fetching the access token
