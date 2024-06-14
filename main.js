@@ -6,14 +6,16 @@ const container = document.querySelector('div[data-js="tracks"]');
 let currentTrackIndex = 0;
 let tracks = [];
 let lyricsData = [];
+let audio = new Audio();
 
 fetch('genius.json')
   .then(response => response.json())
   .then(data => {
-    lyricsData = data.lyrics;
-    fetchAccessToken();
+    const container = document.getElementById('json-container');
+    container.textContent = JSON.stringify(data, null, 2); // Format with 2 spaces
   })
-  .catch(error => console.error('Error fetching lyrics:', error));
+  .catch(error => console.error('Error fetching JSON:', error));
+
 
 function fetchPlaylist(token, playlistId) {
   fetch(`https://api.spotify.com/v1/playlists/${PLAYLIST_ID}`, {
@@ -52,7 +54,7 @@ function displayTrack(index) {
         </div>
         <div class="navigation-buttons">
           <button id="prev-btn"><i class="fas fa-chevron-left"></i></button>
-          ${item.track.preview_url ? `<audio controls src="${item.track.preview_url}"></audio>` : "<p>No preview available</p>"}
+          <button id="play-btn"><i class="fas fa-play"></i></button>
           <button id="next-btn"><i class="fas fa-chevron-right"></i></button>
         </div>
       </div>
@@ -71,21 +73,11 @@ function displayTrack(index) {
 
     container.appendChild(trackDiv);
 
-    const containerLeft = document.querySelector('.containerLeft');
-    if (containerLeft) {
-      // Display lyrics for the current track in the background of containerLeft
-      const lyricsIndex = index;
-      if (lyricsData[lyricsIndex]) {
-        containerLeft.style.backgroundImage = `url(data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"><foreignObject width="100%" height="100%"><div xmlns="http://www.w3.org/1999/xhtml" style="font-size:40px;color:gray;">${lyricsData[lyricsIndex]}</div></foreignObject></svg>`)})`;
-        containerLeft.style.backgroundSize = "cover";
-      } else {
-        containerLeft.style.backgroundImage = '';
-      }
-    } else {
-      console.error('Error: .containerLeft element not found.');
-    }
+    const playBtn = document.getElementById('play-btn');
+    playBtn.addEventListener('click', () => togglePlayback(item.track.preview_url));
 
     document.getElementById('prev-btn').addEventListener('click', () => {
+      stopPlayback();
       if (currentTrackIndex > 0) {
         currentTrackIndex--;
         displayTrack(currentTrackIndex);
@@ -93,6 +85,7 @@ function displayTrack(index) {
     });
 
     document.getElementById('next-btn').addEventListener('click', () => {
+      stopPlayback();
       if (currentTrackIndex < tracks.length - 1) {
         currentTrackIndex++;
         displayTrack(currentTrackIndex);
@@ -118,6 +111,25 @@ function fetchAccessToken() {
     .catch((error) => {
       console.error("Error:", error);
     });
+}
+
+function togglePlayback(previewUrl) {
+  if (audio.paused) {
+    if (previewUrl) {
+      audio.src = previewUrl;
+      audio.play();
+      document.getElementById('play-btn').innerHTML = '<i class="fas fa-pause"></i>';
+    }
+  } else {
+    audio.pause();
+    document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i>';
+  }
+}
+
+function stopPlayback() {
+  audio.pause();
+  audio.currentTime = 0;
+  document.getElementById('play-btn').innerHTML = '<i class="fas fa-play"></i>';
 }
 
 // Start the process by fetching the access token
